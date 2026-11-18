@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz da Consciência Negra</title>
+<meta name="description" content="Quiz para o ensino fundamental sobre história e cultura afro-brasileira. 5 perguntas por rodada.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✊🏿</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--verde:#0F3D2E;--verde2:#165a43;--ouro:#F4B223;--verm:#C8312B;--tinta:#1A120B;--papel:#FFF8E6;--ok:#1E7A46;--erro:#B3261E}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:Nunito,system-ui,sans-serif;font-weight:500;color:var(--tinta);background:var(--verde);
+background-image:radial-gradient(circle at 1px 1px,rgba(244,178,35,.16) 1.5px,transparent 0);background-size:22px 22px;
+display:flex;flex-direction:column;align-items:center;padding:0 16px 32px}
+.faixa{width:100vw;height:14px;background:linear-gradient(90deg,var(--verm) 33.3%,var(--ouro) 33.3% 66.6%,var(--verde2) 66.6%);margin-bottom:24px}
+main{width:100%;max-width:560px}
+h1,h2,.btn,.opt{font-family:"Baloo 2",system-ui,sans-serif}
+.card{background:var(--papel);border-radius:22px;padding:24px 20px;box-shadow:0 6px 0 rgba(0,0,0,.35)}
+.hero{text-align:center;color:var(--papel)}
+.data{font-family:"Baloo 2",sans-serif;font-weight:800;font-size:clamp(88px,26vw,132px);line-height:.9;color:var(--ouro);margin:8px 0 0;letter-spacing:-2px}
+h1{font-size:clamp(30px,8vw,42px);line-height:1.05;margin:6px 0 12px;font-weight:800}
+.hero p{font-size:18px;line-height:1.5;margin:0 auto 22px;max-width:30ch}
+.btn{appearance:none;border:0;cursor:pointer;background:var(--ouro);color:var(--tinta);font-weight:800;font-size:22px;padding:12px 34px;border-radius:999px;box-shadow:0 5px 0 #b57f0c;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #b57f0c}
+.btn.sec{background:var(--papel);box-shadow:0 5px 0 #b9ae93}
+.melhor{margin-top:18px;color:var(--ouro);font-weight:700}
+.hidden{display:none!important}
+.topo{display:flex;justify-content:space-between;align-items:center;color:var(--papel);margin-bottom:12px;font-weight:700}
+.dots{display:flex;gap:8px}
+.dots span{width:30px;height:10px;border-radius:6px;background:rgba(255,248,230,.28)}
+.dots .atual{background:var(--ouro)}.dots .ok{background:#5fd18b}.dots .bad{background:#ff7b72}
+#q{font-size:clamp(21px,5.6vw,26px);line-height:1.25;margin:0 0 18px;font-weight:600}
+.opts{display:grid;gap:10px}
+.opt{appearance:none;text-align:left;cursor:pointer;font-size:18px;font-weight:600;line-height:1.25;padding:13px 16px;border-radius:14px;border:2.5px solid var(--tinta);background:#fff;color:var(--tinta);transition:background .12s}
+.opt:hover:not(:disabled){background:#FFF0C2}
+.opt:disabled{cursor:default}
+.opt.certa{background:#CFF0DB;border-color:var(--ok)}
+.opt.errada{background:#F8D4D1;border-color:var(--erro)}
+.opt.apagada{opacity:.5}
+#fb{margin-top:16px;padding:14px 16px;border-radius:14px;background:#fff;border-left:8px solid var(--ok);line-height:1.45}
+#fb.erro{border-left-color:var(--erro)}
+#fb strong{font-family:"Baloo 2",sans-serif;font-size:20px;display:block}
+#prox{margin-top:16px;width:100%;font-size:20px}
+.fim{text-align:center}
+.pts{font-family:"Baloo 2",sans-serif;font-weight:800;font-size:84px;line-height:1;color:var(--verm);margin:4px 0}
+.pts small{font-size:26px;color:var(--tinta)}
+.estrelas{font-size:34px;letter-spacing:6px}
+.fim h2{margin:6px 0;font-size:28px}
+.fim p{margin:6px 0 18px;line-height:1.5}
+.acoes{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+footer{margin-top:22px;color:rgba(255,248,230,.75);font-size:14px;text-align:center;max-width:46ch}
+button:focus-visible{outline:4px solid #7ab8ff;outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="faixa" aria-hidden="true"></div>
+<main>
+
+<section id="inicio" class="hero">
+  <div class="data" aria-hidden="true">20/11</div>
+  <h1>Quiz da Consciência Negra</h1>
+  <p>Cinco perguntas sobre história, cultura e respeito. Quantos pontos você faz?</p>
+  <button class="btn" id="jogar">Jogar</button>
+  <div class="melhor" id="melhor"></div>
+</section>
+
+<section id="jogo" class="hidden">
+  <div class="topo"><div class="dots" id="dots" aria-hidden="true"></div><div>Pontos: <span id="pts">0</span></div></div>
+  <div class="card">
+    <h2 id="q"></h2>
+    <div class="opts" id="opts"></div>
+    <div id="fb" class="hidden" role="status" aria-live="polite"></div>
+    <button class="btn hidden" id="prox"></button>
+  </div>
+</section>
+
+<section id="fim" class="hidden">
+  <div class="card fim">
+    <div class="estrelas" id="estrelas" aria-hidden="true"></div>
+    <div class="pts"><span id="total">0</span><small> pontos</small></div>
+    <h2 id="titulo"></h2>
+    <p id="msg"></p>
+    <div class="acoes">
+      <button class="btn" id="again">Jogar de novo</button>
+      <button class="btn sec" id="home">Início</button>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer>Cada rodada sorteia 5 perguntas entre várias. Jogue de novo para ver outras.<br>Criado pela professora Cinthia Anjos.</footer>
+
+<script>
+// Formato: [pergunta, resposta certa, [3 erradas], explicação]
+const Q=[
+["Em que dia é comemorado o Dia Nacional da Consciência Negra?","20 de novembro",["13 de maio","7 de setembro","21 de abril"],"O 20 de novembro lembra a morte de Zumbi dos Palmares, em 1695. Desde 2024 a data é feriado nacional."],
+["Quem foi Zumbi dos Palmares?","Líder do Quilombo dos Palmares e símbolo da luta contra a escravidão",["Um imperador do Brasil","Um explorador português","Um jogador de futebol"],"Zumbi liderou a resistência de Palmares e é lembrado como herói da liberdade."],
+["Em que ano morreu Zumbi dos Palmares?","1695",["1888","1500","1822"],"Zumbi morreu em 20 de novembro de 1695. Por isso essa é a data da Consciência Negra."],
+["O que era um quilombo?","Comunidade formada por pessoas que fugiram da escravidão",["Um navio que trazia africanos","Um tipo de moeda antiga","Uma festa de rua"],"Os quilombos eram lugares de liberdade, de cultura e de resistência."],
+["Hoje, em qual estado fica a Serra da Barriga, onde existiu o Quilombo dos Palmares?","Alagoas",["Bahia","São Paulo","Rio Grande do Sul"],"Palmares chegou a reunir milhares de pessoas e resistiu por quase um século."],
+["Qual lei acabou oficialmente com a escravidão no Brasil, em 1888?","Lei Áurea",["Lei do Ventre Livre","Lei Maria da Penha","Lei Seca"],"A Lei Áurea foi assinada em 13 de maio de 1888. O Brasil foi o último país das Américas a abolir a escravidão."],
+["Quem foi Dandara dos Palmares?","Guerreira que lutou pela liberdade no Quilombo dos Palmares",["Princesa que assinou a Lei Áurea","Cantora de samba","Professora do Império"],"Dandara é lembrada como uma grande guerreira e companheira de Zumbi."],
+["Quem foi Tereza de Benguela?","Líder de um quilombo em Mato Grosso, no século 18",["Rainha de Portugal","Primeira atleta olímpica","Cantora de bossa nova"],"Ela comandou o Quilombo do Quariterê e é símbolo da força das mulheres negras."],
+["Quem foi Luiz Gama?","Advogado que usou as leis para libertar muitas pessoas escravizadas",["Rei do Congo","Comandante do exército imperial","Cantor de ópera"],"Luiz Gama foi escravizado ainda criança e se tornou um dos maiores abolicionistas do Brasil."],
+["Qual escritor negro ajudou a fundar a Academia Brasileira de Letras?","Machado de Assis",["Monteiro Lobato","Carlos Drummond de Andrade","José de Alencar"],"Machado de Assis foi o primeiro presidente da Academia e escreveu Dom Casmurro."],
+["Quem escreveu o livro “Quarto de Despejo”, sobre a vida numa favela de São Paulo?","Carolina Maria de Jesus",["Clarice Lispector","Cecília Meireles","Ruth Rocha"],"O livro foi publicado em 1960, fez muito sucesso e foi traduzido para vários idiomas."],
+["Qual escritor(a) criou a palavra “escrevivência”, que une escrever e viver?","Conceição Evaristo",["Clarice Lispector","Rachel de Queiroz","Lygia Fagundes Telles"],"Conceição Evaristo conta, em seus textos, a vida e a força das mulheres negras."],
+["Quem é conhecido como Rei do Futebol e foi campeão do mundo três vezes?","Pelé",["Garrincha","Ronaldo","Zico"],"Pelé foi campeão em 1958, 1962 e 1970 e é um dos maiores ídolos do esporte brasileiro."],
+["A capoeira mistura luta, dança e música. Quem a criou no Brasil?","Africanos escravizados e seus descendentes",["Imigrantes italianos","Colonizadores holandeses","Marinheiros franceses"],"A roda de capoeira é Patrimônio Cultural Imaterial da Humanidade, título dado pela UNESCO."],
+["Qual instrumento da capoeira é um arco de madeira com uma cabaça?","Berimbau",["Violino","Flauta doce","Piano"],"O berimbau, de origem africana, comanda o ritmo e o jogo na roda de capoeira."],
+["Qual comida típica da Bahia, de origem africana, é feita de massa de feijão-fradinho frita no azeite de dendê?","Acarajé",["Pão de queijo","Brigadeiro","Tapioca"],"O acarajé é vendido pelas baianas e o ofício delas é Patrimônio Cultural do Brasil."],
+["Qual ritmo brasileiro tem fortes raízes africanas?","Samba",["Polca","Valsa","Minueto"],"O samba nasceu nas comunidades negras, principalmente na Bahia e no Rio de Janeiro."],
+["Qual palavra que usamos no dia a dia vem de uma língua africana?","Cafuné",["Abajur","Chocolate","Pastel"],"Cafuné vem do quimbundo, língua de Angola. Também são de origem africana: caçula e fubá."],
+["Qual cidade brasileira é conhecida pela forte herança africana, com acarajé, capoeira e candomblé?","Salvador",["Curitiba","Porto Alegre","Brasília"],"Salvador é um dos maiores centros da cultura afro-brasileira."],
+["De qual continente vieram as pessoas trazidas à força para o Brasil durante a escravidão?","África",["Ásia","Europa","Oceania"],"Milhões de africanos foram trazidos à força. Eles construíram o Brasil e deixaram uma herança enorme."],
+["Como eram chamados os navios que levavam africanos escravizados para as Américas?","Navios negreiros",["Navios piratas","Caravelas de passeio","Transatlânticos de luxo"],"A viagem era terrível e muitas pessoas não sobreviviam à travessia."],
+["Uma lei de 2003 determina que as escolas ensinem sobre:","História e cultura afro-brasileira e africana",["Somente a história da Europa","Só a história do Brasil Colônia","Apenas geografia"],"É a Lei 10.639. Conhecer essa história ajuda a valorizar a cultura de todos os brasileiros."],
+["Segundo o Censo 2022 do IBGE, a maior parte da população brasileira se declara:","Preta ou parda",["Branca","Amarela","Indígena"],"Pessoas pretas e pardas são cerca de 55% da população do Brasil."],
+["Qual país tem a maior população negra fora da África?","Brasil",["Estados Unidos","Cuba","Jamaica"],"A população negra brasileira é uma das maiores do mundo."],
+["Verdadeiro ou falso: ainda existem comunidades quilombolas no Brasil hoje.","Verdadeiro",["Falso"],"O Censo 2022 contou mais de 1 milhão de pessoas quilombolas, que mantêm as tradições dos antepassados."],,
+["Quem foi Mestre Bimba?","Capoeirista que criou a Capoeira Regional, na Bahia",["Navegador português","Presidente do Brasil","Inventor do avião"],"Mestre Bimba abriu uma das primeiras escolas de capoeira do país, em Salvador, nos anos 1930."],
+["Quem foi André Rebouças?","Engenheiro e inventor que lutou pelo fim da escravidão",["Pintor da corte","Navegador português","Padre missionário"],"André Rebouças viveu no século 19 e projetou obras importantes no Rio de Janeiro."],
+["O maracatu, com tambores e figurinos de reis e rainhas, é uma tradição típica de qual estado?","Pernambuco",["Santa Catarina","Mato Grosso","Paraná"],"O maracatu tem origem em tradições africanas e é uma das marcas do Carnaval de Recife."],
+["Como se chama o pano colorido enrolado na cabeça, muito usado em tradições afro-brasileiras?","Turbante",["Boina","Chapéu de palha","Viseira"],"O turbante tem origem africana e hoje é símbolo de cultura e de beleza."],
+["Qual destes é um famoso bloco afro da Bahia, que une música, dança e cultura?","Olodum",["Galo da Madrugada","Bloco das Carmelitas","Monobloco"],"O Olodum nasceu em Salvador, no Pelourinho, e é conhecido no mundo todo pelos seus tambores."]
+
+];
+
+const $=s=>document.querySelector(s);
+const sh=a=>{a=a.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a};
+const KEY="quiz-consciencia-negra-melhor";
+let deck=[],rodada=[],i=0,pts=0,trava=false,marcas=[];
+
+function show(id){["inicio","jogo","fim"].forEach(s=>$("#"+s).classList.toggle("hidden",s!==id))}
+function melhor(){try{return +localStorage.getItem(KEY)||0}catch(e){return 0}}
+function salvar(v){try{if(v>melhor())localStorage.setItem(KEY,v)}catch(e){}}
+function mostraMelhor(){const m=melhor();$("#melhor").textContent=m?"Seu recorde: "+m+" pontos":""}
+
+function comecar(){
+  if(deck.length<5)deck=sh(Q);
+  rodada=deck.splice(0,5);i=0;pts=0;marcas=[];
+  show("jogo");perguntar();
+}
+function dots(){
+  $("#dots").innerHTML=rodada.map((_,k)=>"<span class='"+(marcas[k]||(k===i?"atual":""))+"'></span>").join("");
+  $("#pts").textContent=pts;
+}
+function perguntar(){
+  trava=false;
+  const [q,c,w]=rodada[i];
+  $("#q").textContent=q;
+  $("#fb").classList.add("hidden");$("#prox").classList.add("hidden");
+  const box=$("#opts");box.innerHTML="";
+  sh([c,...w]).forEach(t=>{
+    const b=document.createElement("button");
+    b.className="opt";b.textContent=t;
+    b.onclick=()=>responder(b,t===c);
+    box.appendChild(b);
+  });
+  dots();
+  $("#q").scrollIntoView({block:"nearest"});
+}
+function responder(btn,acertou){
+  if(trava)return;trava=true;
+  const [,c,,exp]=rodada[i];
+  document.querySelectorAll(".opt").forEach(o=>{
+    o.disabled=true;
+    if(o.textContent===c)o.classList.add("certa");
+    else if(o===btn)o.classList.add("errada");
+    else o.classList.add("apagada");
+  });
+  if(acertou)pts+=10;
+  marcas[i]=acertou?"ok":"bad";
+  const fb=$("#fb");
+  fb.className=acertou?"":"erro";
+  fb.innerHTML="<strong>"+(acertou?"Isso mesmo! +10 pontos":"Quase! A resposta certa está em verde.")+"</strong>"+exp;
+  const p=$("#prox");
+  p.textContent=i<4?"Próxima pergunta":"Ver resultado";
+  p.classList.remove("hidden");p.focus();
+  dots();
+}
+function proxima(){
+  if(i<4){i++;perguntar()}else fim();
+}
+function fim(){
+  const rec=melhor();salvar(pts);
+  const acertos=pts/10;
+  $("#total").textContent=pts;
+  $("#estrelas").textContent="★".repeat(acertos)+"☆".repeat(5-acertos);
+  const msgs=[
+    ["Todo começo é aprendizado","Você ainda tem muito a descobrir, e isso é ótimo. Leia as explicações e tente de novo."],
+    ["Bom começo","Você já conhece um pouco dessa história. Jogue de novo para aprender mais."],
+    ["Está indo bem","Você sabe bastante. Mais uma rodada e você chega lá."],
+    ["Muito bem","Quase perfeito! Você conhece bem a história e a cultura afro-brasileira."],
+    ["Quase perfeito","Só um deslize. Você está pronto para ensinar a turma."],
+    ["Pontuação máxima","Você acertou tudo! Compartilhe o que aprendeu com sua turma."]
+  ][acertos];
+  $("#titulo").textContent=msgs[0];
+  $("#msg").textContent=msgs[1]+(pts>rec&&rec>0?" Novo recorde!":"");
+  show("fim");
+}
+$("#jogar").onclick=comecar;
+$("#again").onclick=comecar;
+$("#prox").onclick=proxima;
+$("#home").onclick=()=>{mostraMelhor();show("inicio")};
+mostraMelhor();
+</script>
+</body>
+</html>
